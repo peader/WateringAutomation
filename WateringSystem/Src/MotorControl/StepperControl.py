@@ -11,6 +11,7 @@ GPIO.setup(23, GPIO.OUT)
 GPIO.setup(24, GPIO.OUT)
 p = GPIO.PWM(24, 500)
 #Note: One revolution seems to be around 340 steps
+#Note direction=False is close and direction=True is open
 def SpinMotor(direction, num_steps):
         GPIO.output(23, direction)
         while num_steps > 0:

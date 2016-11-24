@@ -32,6 +32,9 @@ class WateringLog(Model):
             print('watering information successfully saved to database')
         except IntegrityError:
             print('failed to save watering information to database')
+            
+    def getSelectedDayWaterLogs(self, SelectedDate):
+        return WateringLog.select().where(WateringLog.date==SelectedDate)
         
         
 class MoistureContentLog(Model):
