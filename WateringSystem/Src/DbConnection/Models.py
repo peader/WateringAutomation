@@ -35,12 +35,15 @@ class WateringLog(Model):
             
     def getSelectedDayWaterLogs(self, SelectedDate):
         return WateringLog.select().where(WateringLog.date==SelectedDate)
+    
+    def sumSelectedDayWaterVol(self, SelectedDate):
+        return WateringLog.select(fn.SUM(WateringLog.volWater)).where(WateringLog.date==SelectedDate).scalar()
         
         
 class MoistureContentLog(Model):
       # These are all the fields it has
     # match up CharField/IntegerField/etc with correct type
-    dbn = CharField(primary_key=True) # primary key = unique id
+    #dbn = CharField(primary_key=True) # primary key = unique id
     date = DateField()
     time = TimeField()
     moistureContent = DoubleField()
@@ -50,6 +53,17 @@ class MoistureContentLog(Model):
     class Meta:
         database = mysql_db
         db_table = 'MoistureContentLog'
+        
+    def logMoistureContentInfo(self, todaysDate, currentTime, contentMoisture):
+        try:
+            with mysql_db.transaction():
+                 MoistureContentLog.create(date=todaysDate, time=currentTime, volWater=contentMoisture)
+            print('watering information successfully saved to database')
+        except IntegrityError:
+            print('failed to save watering information to database')
+            
+    def getLatestWaterContent(self):
+        return MoistureContentLog.select().order_by(MoistureContentLog.id.desc()).get()
 
 
    
